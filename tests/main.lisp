@@ -381,7 +381,7 @@
   (let ((board (dlgo::make-board +small-board+)))
     (setf (aref (dlgo::board-grid board) 0) A1)
     (let ((shallow-board (dlgo::copy-board board))
-	  (deep-board (dlgo::deep-copy-board board)))
+	  (deep-board (dlgo.board::deep-copy-board board)))
       ;; We change board...
       (setf (aref (dlgo::board-grid board) 1) A2)
 
