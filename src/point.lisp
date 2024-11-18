@@ -13,6 +13,7 @@
 	   #:point-on-grid
 	   #:point-to-coords
 	   #:point-index
+	   #:coords-to-point
 	   #:+column-labels+))
 
 (in-package #:dlgo.point)
@@ -67,3 +68,15 @@ otherwise NIL."
     (when (and (<= 1 col size)
 	       (<= 1 row size))
       point)))
+
+
+(defun column-to-int (column-label)
+  "Return the number corresponding to COLUMN-LABEL."
+  (1+ (position (char-upcase column-label)
+		+column-labels+)))
+
+(defun coords-to-point (coords)
+  "Return a point corresponding to COORDS. COORDS is a string such as A1."
+  (let ((col (column-to-int (char coords 0)))
+	(row (parse-integer (subseq coords 1))))
+    (make-point :col col :row row)))

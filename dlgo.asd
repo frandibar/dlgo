@@ -4,7 +4,9 @@
   :license "MIT"
   :depends-on (#:alexandria
 	       #:binding-arrows
-	       #:split-sequence)
+	       #:split-sequence
+	       #:uiop
+	       #:str)
   :components ((:module "src"
 		:serial t
 		:components ((:file "util")
@@ -14,6 +16,7 @@
 			     (:file "board")
 			     (:file "main")
 			     (:file "agent")
+			     (:file "gtp")
 			     (:file "sgf")
 			     (:file "tui"))))
   :description "Go board engine with textual interface for two players and a dummy bot to play against."
