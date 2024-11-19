@@ -10,7 +10,13 @@
   (:import-from #:dlgo
 		#:game-moves
 		#:game-board
+		#:game-info
 		#:game-komi
+		#:game-handicap
+		#:game-player-black
+		#:game-player-white
+		#:player-name
+		#:player-level
 		#:board-size)
   (:export #:make-sgf))
 
@@ -33,22 +39,40 @@
 
 (defun sgf-header (game)
   "Return headers for GAME."
-  ;; Use 2 decimals for komi (KM)
-  (format nil ";GM[1]
+  (let ((sz (format nil "SZ[~d]"
+		    (board-size (game-board game))))
+	;; Use 2 decimals for komi
+	(km (format nil "KM[~$]"
+		    (game-komi (game-info game))))
+	(ha (format nil "HA[~d]"
+		    (game-handicap (game-info game))))
+	(pb (format nil "PB[~a]"
+		    (player-name (game-player-black (game-info game)))))
+	(pw (format nil "PW[~a]"
+		    (player-name (game-player-white (game-info game)))))
+	(br (format nil "BR[~a]"
+		    (player-level (game-player-black (game-info game)))))
+	(wr (format nil "WR[~a]"
+		    (player-level (game-player-white (game-info game)))))
+	(re (format nil "RE[]"))
+	(dt (format nil "DT[~a]"
+		    (current-date-as-yyyy-mm-dd))))
+    (format nil ";GM[1]
 FF[4]
 CA[UTF-8]
 US[dlgo]
 RU[Chinese]
-SZ[~d]
-KM[~$]
-HA[]
-PW[]
-PB[]
-DT[~a]
+~a
+~a
+~a
+~a
+~a
+~a
+~a
+~a
+~a
 "
-	  (board-size (game-board game))
-	  (game-komi game)
-	  (current-date-as-yyyy-mm-dd)))
+	    sz km ha pb pw br wr re dt)))
 
 (defun sgf-moves (game-moves board-size)
   "Return string with moves in sgf format."
@@ -72,7 +96,7 @@ DT[~a]
       (format nil "[~a]"
 	      (cond
 		((point-p move) (sgf-coordinate board-size
-						      move))
+						move))
 		((eq 'pass move) "")
 		(t (error "Invalid move."))))))
 

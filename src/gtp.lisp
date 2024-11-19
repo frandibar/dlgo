@@ -13,6 +13,9 @@
 		#:resign-move
 		#:game-over-p
 		#:make-game
+		#:make-game-info
+		#:make-player-info
+		#:game-info
 		#:place-stone-move)
   (:import-from #:dlgo.sgf
 		#:make-sgf)
@@ -94,6 +97,18 @@
 	 (size +small-board+)
 	 (gnugo (start-gnugo))
 	 (game (make-game size)))
+
+    (setf (game-info game)
+	  (make-game-info
+	   :komi +komi+
+	   :handicap 0
+	   :player-black (make-player-info
+			  :name "Random Bot"
+			  :level "30 kyu")
+	   :player-white (make-player-info
+			  :name "GNU Go"
+			  :level "")))
+
     (format t "~&Started ~ax~a Go game, bot (black) vs gnugo (white)..." size size)
     (unwind-protect
 	 (progn

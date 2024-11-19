@@ -7,6 +7,7 @@
   (:import-from #:dlgo.point
 		#:point-index
 		#:point-to-coords
+		#:index-to-point
 		#:make-point)
   (:import-from #:alexandria
 		#:define-constant)
@@ -29,13 +30,6 @@ If COLOR is NIL, then it means that POINT is empty."
 		  (white 722) 		; 2x19x19
 		  (t 0))))
     (+ offset (* (point-index point +big-board+)))))
-
-(defun index-to-point (index)
-  "Return a POINT that corresponds to an INDEX in a 19x19 board."
-  ;; The order is A1..A19,...,T1..T19.
-  (multiple-value-bind (col row) (floor index +big-board+)
-    (make-point :col (1+ col)
-		:row (1+ row))))
 
 (defun index-label (index)
   "Return a label that corresponds to INDEX in vector holding hash codes.

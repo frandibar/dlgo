@@ -47,12 +47,20 @@
 	   #:game-moves
 	   #:game-board
 	   #:during-game
-	   #:game-komi
 	   #:captures-black
 	   #:captures-white
 	   #:make-snapshot
 	   #:copy-game
-	   #:opponent))
+	   #:opponent
+	   #:make-player-info
+	   #:make-game-info
+	   #:game-info
+	   #:game-komi
+	   #:game-handicap
+	   #:game-player-black
+	   #:game-player-white
+	   #:player-name
+	   #:player-level))
 
 (in-package #:dlgo)
 
@@ -100,24 +108,33 @@
   (set-group-unique-list group-liberties liberties group))
 
 (defstruct captures
-  (:black 0)
-  (:white 0))
+  (black 0)
+  (white 0))
+
+(defstruct (player-info (:conc-name player-))
+  name
+  level)
+
+(defstruct (game-info (:conc-name game-))
+  (komi 6.5)
+  (handicap 0)
+  (player-black (make-player-info))
+  (player-white (make-player-info)))
 
 (defstruct (game (:constructor make-game (size)))
-  (:turn 'black)
-  (:board (make-board size))
-  (:captures (make-captures))
-  (:moves nil)
-  (:komi 6.5)
-  (:handicap 0)
-  (:snapshots nil)
-  (:winner nil))
+  (turn 'black)
+  (board (make-board size))
+  (captures (make-captures))
+  (moves '())
+  (info (make-game-info))
+  (snapshots '())
+  (winner nil))
 
 (defstruct (snapshot (:constructor make-snapshot (game)))
-  (:turn (game-turn game))
-  (:board (deep-copy-board (game-board game)))
-  (:captures (copy-captures (game-captures game)))
-  (:moves (copy-seq (game-moves game))))
+  (turn (game-turn game))
+  (board (deep-copy-board (game-board game)))
+  (captures (copy-captures (game-captures game)))
+  (moves (copy-seq (game-moves game))))
 
 (defun game-over-p (game)
   "A GAME is over if there is a winner or last two moves where a pass."
@@ -419,12 +436,8 @@ ATTENTION: this function mutates BOARD.
 
 (defun score-capture (color number-of-stones captures)
   "Return a copy of CAPTURES with NUMBER-OF-STONES added to COLOR."
-  (let ((new-captures (copy-captures captures))
-	(color-slot
-	  (ecase color
-	    (black :black)
-	    (white :white ))))
-    (incf (slot-value new-captures color-slot) number-of-stones)
+  (let ((new-captures (copy-captures captures)))
+    (incf (slot-value new-captures color) number-of-stones)
     new-captures))
 
 (defun self-capture-p (point board)

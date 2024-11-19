@@ -98,8 +98,8 @@
 
 (defun text-stone (color)
   (ecase color
-    (:black +black-stone+)
-    (:white +white-stone+)))
+    (black +black-stone+)
+    (white +white-stone+)))
 
 (defun draw-stone (point board)
   "Return the string representation of POINT on BOARD."
@@ -202,8 +202,7 @@ Does not check if it's out of the board."
 	;; Use ~p directive to deal with plural.
 	(format-string "~3t~a (~a) has captured ~d stone~p~%"))
     (with-output-to-string (string-buffer)
-      (dolist (color
-	       (list :black :white))
+      (dolist (color (list 'black 'white))
 	(format string-buffer format-string
 		color
 		(text-stone color)

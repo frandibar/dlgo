@@ -1,6 +1,7 @@
 (defpackage #:dlgo.util
   (:use #:common-lisp)
-  (:export #:partition))
+  (:export #:partition
+	   #:remove-at-index))
 
 (in-package #:dlgo.util)
 
@@ -15,3 +16,8 @@
         else
           collect item into false-list
         finally (return (values true-list false-list))))
+
+(defun remove-at-index (index lst)
+  "Return a list LST without item at INDEX."
+  (append (subseq lst 0 index)
+	  (nthcdr (1+ index) lst)))

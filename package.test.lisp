@@ -5,6 +5,7 @@
 	#:dlgo.constant
 	#:dlgo.zobrist
 	#:dlgo.point
+	#:dlgo.board
 	#:dlgo.tui
 	#:dlgo.sgf)
   (:import-from #:dlgo.constant

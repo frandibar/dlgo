@@ -13,6 +13,7 @@
 	   #:point-on-grid
 	   #:point-to-coords
 	   #:point-index
+	   #:index-to-point
 	   #:coords-to-point
 	   #:+column-labels+))
 
@@ -80,3 +81,10 @@ otherwise NIL."
   (let ((col (column-to-int (char coords 0)))
 	(row (parse-integer (subseq coords 1))))
     (make-point :col col :row row)))
+
+(defun index-to-point (index)
+  "Return a POINT that corresponds to an INDEX in a 19x19 board."
+  ;; The order is A1..A19,...,T1..T19.
+  (multiple-value-bind (col row) (floor index +big-board+)
+    (make-point :col (1+ col)
+		:row (1+ row))))
