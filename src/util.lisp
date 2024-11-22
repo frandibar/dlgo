@@ -1,6 +1,7 @@
 (defpackage #:dlgo.util
   (:use #:common-lisp)
   (:export #:partition
+	   #:and-then
 	   #:remove-at-index))
 
 (in-package #:dlgo.util)
@@ -21,3 +22,7 @@
   "Return a list LST without item at INDEX."
   (append (subseq lst 0 index)
 	  (nthcdr (1+ index) lst)))
+
+(defun and-then (value fun)
+  (when value
+      (funcall fun value)))

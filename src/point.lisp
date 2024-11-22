@@ -70,7 +70,6 @@ otherwise NIL."
 	       (<= 1 row size))
       point)))
 
-
 (defun column-to-int (column-label)
   "Return the number corresponding to COLUMN-LABEL."
   (1+ (position (char-upcase column-label)
@@ -82,9 +81,9 @@ otherwise NIL."
 	(row (parse-integer (subseq coords 1))))
     (make-point :col col :row row)))
 
-(defun index-to-point (index)
-  "Return a POINT that corresponds to an INDEX in a 19x19 board."
+(defun index-to-point (index board-size)
+  "Return a POINT that corresponds to an INDEX in a board of SIZE."
   ;; The order is A1..A19,...,T1..T19.
-  (multiple-value-bind (col row) (floor index +big-board+)
+  (multiple-value-bind (col row) (floor index board-size)
     (make-point :col (1+ col)
 		:row (1+ row))))

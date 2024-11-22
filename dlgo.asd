@@ -18,6 +18,7 @@
 			     (:file "agent")
 			     (:file "sgf")
 			     (:file "gtp")
+			     (:file "score")
 			     (:file "tui"))))
   :description "Go board engine with textual interface for two players and a dummy bot to play against."
   :in-order-to ((test-op (test-op "dlgo/tests")))
@@ -35,11 +36,12 @@
 	       #:1am)
   :components ((:file "package.test")
 	       (:module "tests"
-		:components
-		((:file "main")
-		 (:file "tui")
-		 (:file "sgf")
-		 (:file "util"))))
+		:serial t
+		:components ((:file "main")
+			     (:file "tui")
+			     (:file "sgf")
+			     (:file "score")
+			     (:file "util"))))
   :description "Test system for dlgo"
   :perform (test-op (op c)
 		    (funcall (read-from-string "dlgo/tests:run-tests"))))

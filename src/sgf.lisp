@@ -39,24 +39,25 @@
 
 (defun sgf-header (game)
   "Return headers for GAME."
-  (let ((sz (format nil "SZ[~d]"
-		    (board-size (game-board game))))
-	;; Use 2 decimals for komi
-	(km (format nil "KM[~$]"
-		    (game-komi (game-info game))))
-	(ha (format nil "HA[~d]"
-		    (game-handicap (game-info game))))
-	(pb (format nil "PB[~a]"
-		    (player-name (game-player-black (game-info game)))))
-	(pw (format nil "PW[~a]"
-		    (player-name (game-player-white (game-info game)))))
-	(br (format nil "BR[~a]"
-		    (player-level (game-player-black (game-info game)))))
-	(wr (format nil "WR[~a]"
-		    (player-level (game-player-white (game-info game)))))
-	(re (format nil "RE[]"))
-	(dt (format nil "DT[~a]"
-		    (current-date-as-yyyy-mm-dd))))
+  (let* ((gi (game-info game))
+	 (sz (format nil "SZ[~d]"
+		     (board-size (game-board game))))
+	 ;; Use 2 decimals for komi
+	 (km (format nil "KM[~$]"
+		     (game-komi gi)))
+	 (ha (format nil "HA[~d]"
+		     (game-handicap gi)))
+	 (pb (format nil "PB[~a]"
+		     (player-name (game-player-black gi))))
+	 (pw (format nil "PW[~a]"
+		     (player-name (game-player-white gi))))
+	 (br (format nil "BR[~a]"
+		     (player-level (game-player-black gi))))
+	 (wr (format nil "WR[~a]"
+		     (player-level (game-player-white gi))))
+	 (re (format nil "RE[]"))
+	 (dt (format nil "DT[~a]"
+		     (current-date-as-yyyy-mm-dd))))
     (format nil ";GM[1]
 FF[4]
 CA[UTF-8]

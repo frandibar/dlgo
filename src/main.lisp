@@ -10,6 +10,7 @@
   (:import-from #:binding-arrows
 		#:->>)
   (:import-from #:dlgo.constant
+		#:+komi+
 		#:black
 		#:white
 		#:pass
@@ -116,7 +117,7 @@
   level)
 
 (defstruct (game-info (:conc-name game-))
-  (komi 6.5)
+  (komi +komi+)
   (handicap 0)
   (player-black (make-player-info))
   (player-white (make-player-info)))

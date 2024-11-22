@@ -98,13 +98,14 @@ Of particular help when not familiar with Common Lisp, but may seem redundant wi
 4. In general I prefer programming in a functional style, where functions don't mutate their arguments. In cases where arguments are mutated, the function name has a =!= suffix.
 
 ** TODO Missing features
-- Calculate score. (add komi)
-- Add time
+- Calculate score.
+- Make a smart bot.
+- Prevent snapshots when using bots (undo is unnecessary), (add has-feature-undo to game)
 - Client-server architecture with go text protocol ([[https://www.lysator.liu.se/~gunnar/gtp/gtp2-spec-draft2/gtp2-spec.html#SECTION00030000000000000000][gtp]]).
 - Graphical client
 - Add feature to load game from =sgf= file.
 - SGF editor
-- Make a smart bot.
+- Add time
 
 ** Additional info
 - https://github.com/maxpumperla/deep_learning_and_the_game_of_go

@@ -46,7 +46,7 @@ i.e. 'B A3'"
 		      (cond ((< index 361) 0)
 			    ((< index 722) 361)
 			    (t 722)))))
-	     (->> (index-to-point index-no-offset)
+	     (->> (index-to-point index-no-offset +big-board+)
 	       point-to-coords))))
     (format nil "~a ~a"
 	    (color-at-index index)
