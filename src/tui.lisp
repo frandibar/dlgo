@@ -1,49 +1,54 @@
 (defpackage #:dlgo.tui
   (:use #:common-lisp)
+
+  (:import-from #:alexandria
+		#:define-constant
+		#:switch)
+  (:import-from #:binding-arrows
+		#:->>)
+
+  (:import-from #:dlgo
+		#:game-over-p
+		#:get-at
+		#:undo-last-move
+		#:resign-move
+		#:pass-move
+		#:place-stone-move
+		#:opponent)
+  (:import-from #:dlgo.mcts
+		#:select-move)
+  (:import-from #:dlgo.board
+		#:board-size)
   (:import-from #:dlgo.constant
+		#:+small-board+
+		#:+medium-board+
+		#:+big-board+
 		#:user-error
 		#:text
 		#:black
 		#:white
 		#:pass
-		#:resign
-		#:+small-board+
-		#:+medium-board+
-		#:+big-board+)
-  (:import-from #:dlgo.agent
-		#:select-move)
-  (:import-from #:dlgo.point
-		#:make-point
-		#:point-p
-		#:point-row
-		#:point-col
-		#:point-on-grid-p
-		#:point-to-coords
-		#:point-equal-p
-		#:+column-labels+)
-  (:import-from #:dlgo.sgf
-		#:make-sgf)
-  (:import-from #:dlgo
+		#:resign)
+  (:import-from #:dlgo.game
 		#:make-game
 		#:game-board
 		#:game-captures
 		#:game-turn
 		#:game-winner
 		#:game-moves
-		#:game-over-p
-		#:group-color
-		#:get-at
-		#:board-size
-		#:undo-last-move
-		#:resign-move
-		#:pass-move
-		#:place-stone-move
-		#:opponent)
-  (:import-from #:alexandria
-		#:define-constant
-		#:switch)
-  (:import-from #:binding-arrows
-		#:->>)
+		#:group-color)
+  (:import-from #:dlgo.point
+		#:+column-labels+
+		#:make-point
+		#:point-equal-p
+		#:point-p
+		#:point-col
+		#:point-row
+		#:point-on-grid-p
+		#:point-to-coords)
+  (:import-from #:dlgo.sgf
+		#:make-sgf)
+
   (:export #:start-game
 	   #:draw-game))
 

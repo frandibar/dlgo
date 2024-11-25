@@ -9,23 +9,22 @@
   (:import-from #:dlgo.constant
 		#:black
 		#:white)
-  (:import-from #:dlgo
+  (:import-from #:dlgo.game
 		#:game-winner
 		#:game-board
 		#:game-info
 		#:game-komi
+		#:game-moves
 		#:group-color
 		#:group-stones)
   (:import-from #:dlgo.point
 		#:point-neighbors
-		#:point-neighbors-on-grid
 		#:point-index
 		#:index-to-point)
   (:import-from #:dlgo.board
 		#:board-size
 		#:board-grid)
-  (:export #:score-game
-	   #:game-result))
+  (:export #:game-result))
 
 (in-package #:dlgo.score)
 
@@ -37,21 +36,24 @@
   (dame 0))
 
 (defun game-result (game)
-  "Return a result string such as B+4."
-  (case (game-winner game)
-    (black "B+Resign")
-    (white "W+Resign")
-    (t (let* ((score (score-game game))
-	      (black-score (+ (score-black-territory score)
-			      (score-black-stones score)))
-	      (white-score (+ (game-komi (game-info game))
-			      (score-white-territory score)
-			      (score-white-stones score)))
-	      (diff (abs (- black-score white-score))))
-	 (format nil
-		 (if (> black-score white-score) "B+~a"
-		     "W+~a")
-		 diff)))))
+  "Return a cons with the result string such as B+4 and the winner."
+  (if (eq 'resign (first (game-moves game)))
+      (case (game-winner game)
+	(black (cons "B+Resign" 'black))
+	(white (cons "W+Resign" 'white))
+	(t (cons "" nil)))
+      (let* ((score (score-game game))
+	     (black-score (+ (score-black-territory score)
+			     (score-black-stones score)))
+	     (white-score (+ (game-komi (game-info game))
+			     (score-white-territory score)
+			     (score-white-stones score)))
+	     (diff (abs (- black-score white-score)))
+	     (result (if (> black-score white-score)
+			 (cons "B" 'black)
+			 (cons "W" 'white))))
+	(cons (format nil "~a+~a" (car result) diff)
+	      (cdr result)))))
 
 (defun score-game (game)
   (calculate-score (evaluate-territory (game-board game))))
@@ -109,7 +111,7 @@ border colors."
 			     #'group-color))
 	     (neighbor-indexes (->>
 				 (index-to-point start-index size)
-				 (funcall (rcurry #'point-neighbors-on-grid size))
+				 (funcall (rcurry #'point-neighbors size))
 				 (mapcar (rcurry #'point-index size)))))
 	(pushnew start-index visited)
 	(loop for neighbor-index in neighbor-indexes do

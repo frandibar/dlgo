@@ -5,19 +5,11 @@
 		#:curry
 		#:rcurry
 		#:set-equal)
-  (:import-from #:split-sequence
-		#:split-sequence-if)
   (:import-from #:binding-arrows
 		#:->>)
-  (:import-from #:dlgo.constant
-		#:+komi+
-		#:black
-		#:white
-		#:pass
-		#:resign
-		#:user-error)
-  (:import-from #:dlgo.util
-		#:partition)
+  (:import-from #:split-sequence
+		#:split-sequence-if)
+
   (:import-from #:dlgo.board
 		#:make-board
 		#:board-size
@@ -27,41 +19,51 @@
 		#:board-equal-p
 		#:empty-p
 		#:get-at)
+  (:import-from #:dlgo.constant
+		#:+komi+
+		#:black
+		#:white
+		#:pass
+		#:resign
+		#:user-error)
+  (:import-from #:dlgo.game
+		#:copy-captures
+		#:copy-game
+		#:copy-group
+		#:game-board
+		#:game-captures
+		#:game-info
+		#:game-moves
+		#:game-snapshots
+		#:game-turn
+		#:game-winner
+		#:group-color
+		#:group-liberties
+		#:group-stones
+		#:make-group
+		#:make-snapshot
+		#:snapshot-board
+		#:snapshot-captures
+		#:snapshot-turn)
   (:import-from #:dlgo.point
 		#:point-p
 		#:point-on-grid-p
 		#:point-index
 		#:point-equal-p
-		#:point-neighbors-on-grid)
+		#:point-neighbors)
+  (:import-from #:dlgo.util
+		#:partition)
   (:import-from #:dlgo.zobrist
 		#:zobrist-hash)
-  (:export #:pass-move
-	   #:resign-move
+
+  (:export #:during-game
+	   #:game-over-p
+	   #:pass-move
 	   #:place-stone-move
+	   #:resign-move
 	   #:undo-last-move
 	   #:valid-move-p
-	   #:game-over-p
-	   #:make-game
-	   #:game-turn
-	   #:game-captures
-	   #:game-winner
-	   #:game-moves
-	   #:game-board
-	   #:during-game
-	   #:captures-black
-	   #:captures-white
-	   #:make-snapshot
-	   #:copy-game
-	   #:opponent
-	   #:make-player-info
-	   #:make-game-info
-	   #:game-info
-	   #:game-komi
-	   #:game-handicap
-	   #:game-player-black
-	   #:game-player-white
-	   #:player-name
-	   #:player-level))
+	   #:opponent))
 
 (in-package #:dlgo)
 
@@ -75,23 +77,6 @@
   (ecase color
     (black 'white)
     (white 'black)))
-
-;; This figure shows three black groups (○) and two white ones
-;; (●). White's big group has 6 liberties and the single white stone
-;; has 3.
-
-;; . . . . . .
-;; . ● . ● ○ .
-;; . . . ● ○ .
-;; . . ● . ○ .
-;; . . ● ○ . .
-;; . . . . . .
-
-(defstruct (group (:constructor make-group (color)))
-  "A group represents a chain of connected stones of the same color."
-  color
-  stones
-  liberties)
 
 (defmacro set-group-unique-list
     (slot-getter list-of-points group)
@@ -107,35 +92,6 @@
 
 (defun set-group-liberties (liberties group)
   (set-group-unique-list group-liberties liberties group))
-
-(defstruct captures
-  (black 0)
-  (white 0))
-
-(defstruct (player-info (:conc-name player-))
-  name
-  level)
-
-(defstruct (game-info (:conc-name game-))
-  (komi +komi+)
-  (handicap 0)
-  (player-black (make-player-info))
-  (player-white (make-player-info)))
-
-(defstruct (game (:constructor make-game (size)))
-  (turn 'black)
-  (board (make-board size))
-  (captures (make-captures))
-  (moves '())
-  (info (make-game-info))
-  (snapshots '())
-  (winner nil))
-
-(defstruct (snapshot (:constructor make-snapshot (game)))
-  (turn (game-turn game))
-  (board (deep-copy-board (game-board game)))
-  (captures (copy-captures (game-captures game)))
-  (moves (copy-seq (game-moves game))))
 
 (defun game-over-p (game)
   "A GAME is over if there is a winner or last two moves where a pass."
@@ -242,6 +198,8 @@
   "Return a copy of GAME with an additional resign move."
   (during-game game
 	       (let ((new-game (copy-game game)))
+		 (setf (game-turn new-game)
+		       (opponent (game-turn new-game)))
 		 (setf (game-moves new-game)
 		       (append-to-slot 'resign #'game-moves new-game))
 		 (setf (game-winner new-game)
@@ -324,8 +282,8 @@ the number of captured stones."
 	   :text "Cannot place a stone on an occupied point."))
 
   (let ((new-board (deep-copy-board board))
-	(neighbors (point-neighbors-on-grid point
-					    (board-size board))))
+	(neighbors (point-neighbors point
+				    (board-size board))))
 
     (setf (board-hash new-board)
 	  (apply-hash point color new-board))
@@ -418,7 +376,7 @@ ATTENTION: this function mutates BOARD.
   (let ((size (board-size board)))
     (dolist (point (group-stones group))
       (let ((groups-to-update
-	      (->> (point-neighbors-on-grid point size)
+	      (->> (point-neighbors point size)
 		(mapcar (rcurry #'get-at board))
 		(remove nil)
 		(remove-if (curry #'group-equal-p group)))))
@@ -452,7 +410,7 @@ Does not check if the move is valid in the context of a game."
       (point-p move)))
 
 (defun valid-move-p (move game)
-  "Return T if MOVE is valid in GAME"
+  "Retrun T if MOVE is valid in GAME."
   (and (not (game-over-p game))
        (or (member move (list 'pass 'resign))
 	   (and (empty-p move (game-board game))

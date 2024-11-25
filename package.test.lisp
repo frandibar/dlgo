@@ -1,23 +1,29 @@
 (defpackage dlgo/tests
   (:use #:common-lisp
+
 	#:dlgo
-	#:dlgo.util
-	#:dlgo.constant
-	#:dlgo.zobrist
-	#:dlgo.point
+	#:dlgo.agent
 	#:dlgo.board
+	#:dlgo.constant
+	#:dlgo.game
+	#:dlgo.point
+	#:dlgo.sgf
 	#:dlgo.tui
-	#:dlgo.sgf)
-  (:import-from #:dlgo.constant
-		#:black
-		#:white)
+	#:dlgo.util
+	#:dlgo.zobrist)
+
+  (:import-from #:1am
+		#:is
+		#:signals
+		#:test)
   (:import-from #:alexandria
 		#:define-constant
 		#:rcurry)
   (:import-from #:binding-arrows
 		#:->>)
-  (:import-from #:1am
-		#:is
-		#:signals
-		#:test)
+
+  (:import-from #:dlgo.constant
+		#:black
+		#:white)
+
   (:export #:run-tests))

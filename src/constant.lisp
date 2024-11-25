@@ -1,17 +1,19 @@
 (defpackage #:dlgo.constant
   (:use #:common-lisp)
+
   (:import-from #:alexandria
 		#:define-constant)
-  (:export #:black
+
+  (:export #:+small-board+
+	   #:+medium-board+
+	   #:+big-board+
+	   #:+komi+
+	   #:black
 	   #:white
 	   #:pass
 	   #:resign
 	   #:user-error
-	   #:text
-	   #:+small-board+
-	   #:+medium-board+
-	   #:+big-board+
-	   #:+komi+))
+	   #:text))
 
 (in-package #:dlgo.constant)
 

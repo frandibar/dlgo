@@ -5,30 +5,34 @@
 
 (defpackage #:dlgo.gtp
   (:use #:common-lisp)
+
   (:import-from #:alexandria
-		#:switch
-		#:define-constant)
+		#:define-constant
+		#:switch)
+
+  (:import-from #:dlgo.game
+		#:game-info
+		#:make-game
+		#:make-game-info
+		#:make-player-info)
   (:import-from #:dlgo
 		#:pass-move
 		#:resign-move
 		#:game-over-p
-		#:make-game
-		#:make-game-info
-		#:make-player-info
-		#:game-info
 		#:place-stone-move)
-  (:import-from #:dlgo.sgf
-		#:make-sgf)
-  (:import-from #:dlgo.agent
+  (:import-from #:dlgo.mcts
 		#:select-move)
+  (:import-from #:dlgo.constant
+		#:+komi+
+		#:+small-board+
+		#:pass
+		#:resign)
   (:import-from #:dlgo.point
 		#:coords-to-point
 		#:point-to-coords)
-  (:import-from #:dlgo.constant
-		#:+small-board+
-		#:+komi+
-		#:pass
-		#:resign)
+  (:import-from #:dlgo.sgf
+		#:make-sgf)
+
   (:export #:start-game))
 
 (in-package #:dlgo.gtp)
@@ -80,10 +84,19 @@
 		(format nil "~a ~a" +gnugo-komi+ komi)))
 
 (defun move-black (process move)
-  (send-command process (format nil "~a ~a ~a" +gnugo-play+ +gnugo-black+ move)))
+  (send-command process
+		(format nil
+			"~a ~a ~a"
+			+gnugo-play+
+			+gnugo-black+
+			move)))
 
 (defun move-white (process)
-  (send-command process (format nil "~a ~a" +gnugo-genmove+ +gnugo-white+)))
+  (send-command process
+		(format nil
+			"~a ~a"
+			+gnugo-genmove+
+			+gnugo-white+)))
 
 (defun apply-move (move game)
   (case move
@@ -93,7 +106,7 @@
 
 (defun start-game ()
   "Start a game of Go. Bot vs gnugo."
-  (let* ((outfile "random-bot-vs-gnugo.sgf")
+  (let* ((outfile "mcts-bot-vs-gnugo.sgf")
 	 (size +small-board+)
 	 (gnugo (start-gnugo))
 	 (game (make-game size)))
@@ -103,8 +116,8 @@
 	   :komi +komi+
 	   :handicap 0
 	   :player-black (make-player-info
-			  :name "Random Bot"
-			  :level "30 kyu")
+			  :name "MCTS Bot"
+			  :level "")
 	   :player-white (make-player-info
 			  :name "GNU Go"
 			  :level "")))

@@ -1,17 +1,22 @@
 (defpackage #:dlgo.board
   (:use #:common-lisp)
+
   (:import-from #:dlgo.point
 		#:point-index)
   (:import-from #:dlgo.zobrist
 		#:+empty-board-hash+)
-  (:export #:make-board
-	   #:board-size
-	   #:board-hash
-	   #:board-grid
-	   #:deep-copy-board
-	   #:board-equal-p
-	   #:get-at
-	   #:empty-p))
+
+  (:export
+   ;; defstruct board
+   #:board-size
+   #:board-grid
+   #:board-hash
+   #:make-board
+   #:board-equal-p
+
+   #:deep-copy-board
+   #:get-at
+   #:empty-p))
 
 (in-package #:dlgo.board)
 

@@ -134,7 +134,7 @@
 
 
 (test test-remove-nonexistent-liberty ()
-  (let ((group (dlgo::make-group 'black)))
+  (let ((group (dlgo.game:make-group 'black)))
     ;; Removing a liberty that doesn't exist does nothing.
     (is (null (dlgo::remove-liberty A2 group)))))
 
@@ -145,9 +145,9 @@
 		     (game-turn))))
     (is (eq 'white next-turn)))
 
-  (let ((next-turn (->> (make-game +small-board+)
-		     (pass-move)
-		     (pass-move)
+  (let ((next-turn (->> (do-moves (make-game +small-board+)
+			  A1
+			  'pass)
 		     (game-turn))))
     (is (eq 'black next-turn))))
 
@@ -185,7 +185,7 @@
 
 
 (test test-add-liberties ()
-  (let* ((group (->> (dlgo::make-group 'black)
+  (let* ((group (->> (dlgo.game:make-group 'black)
 		  (dlgo::set-group-liberties (list A1)))))
     ;; Adding a liberty that is already present does nothing.
     (is (= 1 (length (dlgo::add-liberty A1 group))))
@@ -195,20 +195,20 @@
 
 (test test-group-equal-p ()
   ;; Test empty group is equal to itself.
-  (let ((group (dlgo::make-group 'black)))
+  (let ((group (dlgo.game:make-group 'black)))
     (is (dlgo::group-equal-p group group)))
 
   ;; Test black group is not equal to white group.
-  (let ((black-group (dlgo::make-group 'black))
-	(white-group (dlgo::make-group 'white)))
+  (let ((black-group (dlgo.game:make-group 'black))
+	(white-group (dlgo.game:make-group 'white)))
     (is (not (dlgo::group-equal-p black-group white-group))))
 
   ;; Test groups with same stones (in different order) and liberties
   ;; are equal.
-  (let* ((group-1 (->> (dlgo::make-group 'black)
+  (let* ((group-1 (->> (dlgo.game:make-group 'black)
 		    (dlgo::set-group-stones (list A2 C4))
 		    (dlgo::set-group-liberties (list A2 C4))))
-	 (group-2 (->> (dlgo::make-group 'black)
+	 (group-2 (->> (dlgo.game:make-group 'black)
 		    (dlgo::set-group-stones (list C4 A2))
 		    (dlgo::set-group-liberties (list C4 A2)))))
 
@@ -217,14 +217,14 @@
 
 (test test-merge-groups ()
   ;; Cannot merge black and white groups.
-  (let ((white-group (dlgo::make-group 'white))
-	(black-group (dlgo::make-group 'black)))
+  (let ((white-group (dlgo.game:make-group 'white))
+	(black-group (dlgo.game:make-group 'black)))
 
     (signals simple-error (dlgo::merge-groups white-group black-group)))
 
   ;; Merge empty groups.
-  (let ((group-1 (dlgo::make-group 'black))
-	(group-2 (dlgo::make-group 'black)))
+  (let ((group-1 (dlgo.game:make-group 'black))
+	(group-2 (dlgo.game:make-group 'black)))
     (is (dlgo::group-equal-p (dlgo::merge-groups group-1 group-2)
 			     group-1)))
 
@@ -236,18 +236,18 @@
   ;;   A B C D
 
   ;; Merge non empty groups.
-  (let ((group-a1 (->> (dlgo::make-group 'black)
+  (let ((group-a1 (->> (dlgo.game:make-group 'black)
 		    (dlgo::set-group-stones (list A1))
 		    (dlgo::set-group-liberties nil)))
-	(group-a2 (->> (dlgo::make-group 'black)
+	(group-a2 (->> (dlgo.game:make-group 'black)
 		    (dlgo::set-group-stones (list A2))))
-	(group-b2 (->> (dlgo::make-group 'black)
+	(group-b2 (->> (dlgo.game:make-group 'black)
 		    (dlgo::set-group-stones (list B2)))))
     (is (= 2
-	   (length (dlgo::group-stones
+	   (length (dlgo.game:group-stones
 		    (dlgo::merge-groups group-a1 group-a2)))))
     (is (= 3
-	   (length (dlgo::group-stones
+	   (length (dlgo.game:group-stones
 		    (dlgo::merge-groups
 		     (dlgo::merge-groups group-a1 group-a2)
 		     group-b2)))))))
@@ -274,9 +274,9 @@
 
 
 (test test-group-captured-p ()
-  (let* ((group-without-liberties (dlgo::make-group 'black))
+  (let* ((group-without-liberties (dlgo.game:make-group 'black))
 	 (group-with-liberties
-	   (->> (dlgo::make-group 'black)
+	   (->> (dlgo.game:make-group 'black)
 	     (dlgo::set-group-liberties (list A3 B1)))))
 
     (is (dlgo::group-captured-p group-without-liberties))
@@ -327,16 +327,16 @@
 
 
 (test test-score-capture ()
-  (let ((captures (dlgo::make-captures))
+  (let ((captures (dlgo.game::make-captures))
 	(black-captures 1)
 	(white-captures 2))
     (is (= black-captures
-	   (dlgo::captures-black
+	   (dlgo.game:captures-black
 	    (dlgo::score-capture 'black
 				 black-captures
 				 captures))))
     (is (= white-captures
-	   (dlgo::captures-white
+	   (dlgo.game:captures-white
 	    (dlgo::score-capture 'white
 				 white-captures
 				 captures))))))
@@ -350,7 +350,7 @@
 		B1 A1
 		A2)))
     (is (= 1
-	   (dlgo::captures-black (dlgo::game-captures game))))))
+	   (dlgo.game:captures-black (dlgo.game:game-captures game))))))
 
 
 (test test-capture-1 ()
@@ -387,7 +387,7 @@
 
 
 (test test-self-capture ()
-  ;; In this figure, (○) cannot be placed.
+  ;; In this figure, (●) cannot be placed.
 
   ;; 2 ○ .
   ;; 1(●)○
@@ -400,7 +400,7 @@
 
 
 (test test-capture-without-liberties ()
-  ;; In this figure, (●) captures two ○ groups.
+  ;; In this figure, (○) captures two ○ groups.
 
   ;; 3 ○ . . .
   ;; 2 ● ○ . .
@@ -439,7 +439,7 @@
 
 
 (test test-deep-copy-board ()
-  (let ((board (dlgo::make-board +small-board+)))
+  (let ((board (dlgo.board:make-board +small-board+)))
     (setf (aref (dlgo::board-grid board) 0) A1)
     (let ((shallow-board (dlgo.board::copy-board board))
 	  (deep-board (dlgo.board::deep-copy-board board)))
@@ -482,10 +482,10 @@
 
 
 (test test-set-group-liberties ()
-  (let ((group (->> (dlgo::make-group 'black)
+  (let ((group (->> (dlgo.game:make-group 'black)
 		 (dlgo::set-group-liberties (list A1)))))
     (is (= 1
-	   (length (dlgo::group-liberties group))))))
+	   (length (dlgo.game:group-liberties group))))))
 
 
 (test test-remove-group ()
@@ -503,9 +503,9 @@
 		 C1))
 	 (grid (dlgo::board-grid (game-board game))))
     (is (= 4
-	   (length (dlgo::group-liberties (aref grid 0)))))
+	   (length (dlgo.game:group-liberties (aref grid 0)))))
     (is (= 4
-	   (length (dlgo::group-liberties (aref grid 1)))))))
+	   (length (dlgo.game:group-liberties (aref grid 1)))))))
 
 
 (test test-snapback ()

@@ -50,14 +50,15 @@
 		 E9 G8
 		 F9 G9
 		 J9 H9))
-	 (score (dlgo.score:score-game game)))
+	 (score (dlgo.score::score-game game)))
     (is (= (dlgo.score::score-black-stones score) 33))
     (is (= (dlgo.score::score-black-territory score) 4))
     (is (= (dlgo.score::score-white-stones score) 33))
     (is (= (dlgo.score::score-white-territory score) 8))
     (is (= (dlgo.score::score-dame score) 3))
-    (is (= 7.5 (dlgo:game-komi (game-info game))))
-    (is (string= (dlgo.score:game-result game) "W+11.5"))))
+    (is (= 7.5 (dlgo.game:game-komi (game-info game))))
+    (is (string= (first (dlgo.score:game-result game))
+		 "W+11.5"))))
 
 (test test-score-2 ()
   ;; 7 . ○ ○ ● . ● .
@@ -86,11 +87,12 @@
 		 E5 'pass
 		 F5 'pass
 		 G5 'pass))
-	 (score (dlgo.score:score-game game)))
+	 (score (dlgo.score::score-game game)))
     (is (= (dlgo.score::score-black-stones score) 17))
     (is (= (dlgo.score::score-black-territory score) 11))
     (is (= (dlgo.score::score-white-stones score) 14))
     (is (= (dlgo.score::score-white-territory score) 7))
     (is (= (dlgo.score::score-dame score) 0))
-    (is (= 7.5 (dlgo:game-komi (game-info game))))
-    (is (string= (dlgo.score:game-result game) "W+0.5"))))
+    (is (= 7.5 (dlgo.game:game-komi (game-info game))))
+    (is (string= (first (dlgo.score:game-result game))
+		 "W+0.5"))))

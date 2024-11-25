@@ -1,23 +1,26 @@
 (defpackage #:dlgo.sgf
   (:use #:common-lisp)
+
+  (:import-from #:dlgo.board
+		#:board-size)
   (:import-from #:dlgo.constant
 		#:pass
 		#:resign)
+  (:import-from #:dlgo.game
+		#:game-board
+		#:game-handicap
+		#:game-info
+		#:game-komi
+		#:game-moves
+		#:game-player-black
+		#:game-player-white
+		#:player-level
+		#:player-name)
   (:import-from #:dlgo.point
 		#:point-p
 		#:point-col
 		#:point-row)
-  (:import-from #:dlgo
-		#:game-moves
-		#:game-board
-		#:game-info
-		#:game-komi
-		#:game-handicap
-		#:game-player-black
-		#:game-player-white
-		#:player-name
-		#:player-level
-		#:board-size)
+
   (:export #:make-sgf))
 
 (in-package #:dlgo.sgf)

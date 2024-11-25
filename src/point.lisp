@@ -9,7 +9,6 @@
 	   #:point-p
 	   #:point-equal-p
 	   #:point-neighbors
-	   #:point-neighbors-on-grid
 	   #:point-on-grid
 	   #:point-to-coords
 	   #:point-index
@@ -31,8 +30,8 @@
    (= (point-row point-a)
       (point-row point-b))))
 
-(defun point-neighbors (point)
-  "Return list of points adjacent to POINT."
+(defun all-point-neighbors (point)
+  "Return list of points adjacent to POINT, some may fall off the board."
   (let ((col (point-col point))
 	(row (point-row point)))
     (list
@@ -41,9 +40,9 @@
      (make-point :col (1- col) :row row)
      (make-point :col (1+ col) :row row))))
 
-(defun point-neighbors-on-grid (point size)
+(defun point-neighbors (point size)
   (remove-if-not (rcurry #'point-on-grid-p size)
-		 (point-neighbors point)))
+		 (all-point-neighbors point)))
 
 (define-constant +column-labels+ "ABCDEFGHJKLMNOPQRST"
   :test #'equal)
